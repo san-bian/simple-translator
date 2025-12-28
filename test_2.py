@@ -1,0 +1,92 @@
+import tkinter as tk
+import threading
+import time
+
+
+def show_simple_notification(title, message, x=100, y=100, show_time=3):
+    """显示一个简洁的无按钮通知，自动消失"""
+
+    def close_window():
+        """关闭窗口"""
+        time.sleep(show_time)
+        root.quit()
+        root.destroy()
+
+    # 创建窗口
+    root = tk.Tk()
+    root.title(title)
+
+    # 设置窗口位置和大小
+    root.geometry(f"300x120+{x}+{y}")
+
+    # 设置窗口为无边框、置顶
+    root.overrideredirect(True)  # 无边框
+    root.attributes('-topmost', True)  # 置顶
+    root.attributes('-alpha', 0.95)  # 透明度
+
+    # 设置背景色
+    root.configure(bg='#2c3e50')
+
+    # 创建框架
+    frame = tk.Frame(root, bg='#2c3e50', padx=10, pady=10)
+    frame.pack(fill=tk.BOTH, expand=True)
+
+    # 标题
+    title_label = tk.Label(
+        frame,
+        text=title,
+        font=("Microsoft YaHei", 10, "bold"),
+        fg='#ecf0f1',
+        bg='#2c3e50'
+    )
+    title_label.pack(anchor='w', pady=(0, 5))
+
+    # 消息
+    message_label = tk.Label(
+        frame,
+        text=message,
+        font=("Microsoft YaHei", 9),
+        fg='#bdc3c7',
+        bg='#2c3e50',
+        wraplength=280,
+        justify='left'
+    )
+    message_label.pack(anchor='w')
+
+    # 进度条（显示剩余时间）
+    if show_time > 0:
+        progress = tk.Frame(root, bg='#3498db', height=3)
+        progress.place(x=0, y=115, width=300, height=3)
+
+        def update_progress(remaining_time):
+            """更新进度条"""
+            width = int(300 * remaining_time / show_time)
+            progress.place(width=width)
+
+            if remaining_time > 0:
+                root.after(1000, update_progress, remaining_time - 1)
+
+        update_progress(show_time)
+
+    # 点击窗口任意位置立即关闭
+    def on_click(event):
+        root.quit()
+        root.destroy()
+
+    root.bind("<Button-1>", on_click)
+
+    # 自动关闭线程
+    if show_time > 0:
+        timer_thread = threading.Thread(target=close_window, daemon=True)
+        timer_thread.start()
+
+    # 进入消息循环
+    try:
+        root.mainloop()
+    except:
+        pass
+
+
+# 使用示例
+show_simple_notification(
+    "成功", "文文文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成件保存文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成件保存文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成件保存文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成件保存文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成件保存文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成件保存文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成件保存件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成文件保存完成件保存完成！", 800, 500, 2)
